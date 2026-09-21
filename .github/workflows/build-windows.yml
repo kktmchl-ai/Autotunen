@@ -1,0 +1,31 @@
+name: Build Windows VST3
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+
+      - name: Build
+        run: cmake --build build --config Release --target PitchSnap_VST3 --parallel
+
+      - name: Collect
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          $vst = Get-ChildItem -Path build -Recurse -Directory -Filter "PitchSnap.vst3" | Select-Object -First 1
+          if (-not $vst) { throw "PitchSnap.vst3 not found" }
+          Copy-Item $vst.FullName -Destination dist -Recurse
+          Get-ChildItem -Recurse dist | Select-Object FullName, Length
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PitchSnap-VST3-Windows
+          path: dist
