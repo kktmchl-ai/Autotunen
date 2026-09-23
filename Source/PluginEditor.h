@@ -4,15 +4,24 @@
 #include "PluginProcessor.h"
 
 //==============================================================================
-// Small dark look with a teal accent.
+// Warm paper background, ink-brown text, a vermillion "hanko stamp" accent and
+// a small cherry-blossom sprig. Rotary knobs are drawn as a blossom-petal arc.
 class PitchSnapLookAndFeel final : public juce::LookAndFeel_V4
 {
 public:
     PitchSnapLookAndFeel();
+
+    void drawRotarySlider (juce::Graphics&, int x, int y, int w, int h,
+                           float sliderPosProportional, float rotaryStartAngle, float rotaryEndAngle,
+                           juce::Slider&) override;
+
+    void drawComboBox (juce::Graphics&, int width, int height, bool isButtonDown,
+                       int buttonX, int buttonY, int buttonW, int buttonH, juce::ComboBox&) override;
 };
 
 //==============================================================================
-// Shows the detected note, the note it is being pulled to and a cents needle.
+// Shows the detected note as a red stamp medallion, the note it is being pulled
+// to, and a cents needle rendered as a tiny blossom.
 class PitchDisplay final : public juce::Component
 {
 public:
